@@ -120,6 +120,9 @@ def initialize_database():
     connection.commit()
     connection.close()
 
+@app.route("/manage")
+def manage():
+    return render_template("manage.html")
 
 @app.route("/")
 def dashboard():
