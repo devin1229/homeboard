@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping · Homeboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='shopping.css') }}"
+    />
+  </head>
+  <body>
+    <main class="shopping-page">
+      <header class="shopping-header">
+        <p class="eyebrow">HOMEBOARD</p>
+        <h1>Shopping</h1>
+        <p class="subtitle">
+          Add what we need. Check it off when it lands in the cart.
+        </p>
+      </header>
+      <form
+        class="add-form"
+        action="{{ url_for('add_shopping_item') }}"
+        method="POST"
+      >
+        <input
+          type="text"
+          name="item_name"
+          placeholder="Add an item"
+          autocomplete="off"
+          required
+        />
+        <button type="submit">Add</button>
+      </form>
+      <section class="shopping-list">
+        {% for item in shopping_items %} {%if not item["completed"] %}
+        <form
+          action="{{ url_for('toggle_shopping_item',
+        item_id=item['id']
+        ) }}"
+          method="POST"
+        >
+          <button class="list-item" type="submit">
+            <span class="check-circle"></span>
+            <span class="item-name"> {{ item["name"] }} </span>
+          </button>
+        </form>
+        {% endif %} {% endfor %}
+      </section>
+      {% set completed_items = shopping_items | selectattr("completed",
+      "equalto", 1) | list %} {% if completed_items %}
+      <section class="completed-section">
+        <div class="completed-header">
+          <div>
+            <p class="section-label">RECENTLY COMPLETED</p>
+            <p class="completed-hint">Tap an item to put it back.</p>
+          </div>
+          <form
+            action="{{ url_for('clear_completed_shopping') }}"
+            method="POST"
+          >
+            <button class="clear-button" type="submit">Clear</button>
+          </form>
+        </div>
+        <div class="shopping-list completed-list">
+          {% for item in completed_items %}
+          <form
+            action="{{ url_for('toggle_shopping_item',
+            item_id=item['id']
+            ) }}"
+            method="POST"
+          >
+            <button class="list-item completed" type="submit">
+              <span class="check-circle"> ✓ </span>
+              <span class="item-name"> {{ item["name"] }} </span>
+            </button>
+          </form>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+    </main>
+  </body>
+</html>

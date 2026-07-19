@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tasks · Homeboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='tasks.css') }}"
+    />
+  </head>
+  <body>
+    <main class="tasks-page">
+      <header class="tasks-header">
+        <p class="eyebrow">HOMEBOARD</p>
+        <h1>House tasks</h1>
+        <p class="subtitle">
+          The glamorous machinery of keeping a house alive.
+        </p>
+      </header>
+      <form
+        class="add-task-form"
+        action="{{ url_for('add_task') }}"
+        method="POST"
+      >
+        <div class="field task-name-field">
+          <label for="task_name">Task</label>
+          <input
+            id="task_name"
+            type="text"
+            name="task_name"
+            palceholder="What needs doing?"
+            autocomplete="off"
+            required
+          />
+        </div>
+        <div class="task-options">
+          <div class="field">
+            <label for="assignee"> For </label>
+            <select id="assignee" name="assignee">
+              <option value="Anyone">Anyone</option>
+              <option value="Devin">Devin</option>
+              <option value="Mom">Mom</option>
+              <option value="Garrett">Garrett</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="due_date">Due</label>
+            <input id="due_date" type="date" name="due_date" />
+          </div>
+        </div>
+        <button class="add-button" type="submit">Add task</button>
+      </form>
+      <section class="task-list">
+        {% set active_tasks = task_items | rejectattr("completed", "equalto", 1)
+        | list %} {% if active_tasks %} {% for task in active_tasks %}
+        <form
+          class="task-form"
+          action="{{ url_for('toggle_task', task_id=task['id']) }}"
+          method="POST"
+        >
+          <button class="task-item task-button" type="submit">
+            <span class="task-circle"></span>
+            <span class="task-content">
+              <span class="task-name"> {{ task["name"] }} </span>
+              <span class="task-meta">
+                <span class="assignee"> {{ task["assignee"] }} </span>
+                {% if task["due_date"] %}
+                <span class="due-date"> {{ task["due_date"] }} </span>
+                {% endif %}
+              </span>
+            </span>
+          </button>
+        </form>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <p>Nothing left to do.</p>
+          <span> A rare and beautiful household event. </span>
+        </div>
+        {% endif %}
+      </section>
+      {% set completed_tasks = task_items | selectattr("completed", "equalto",
+      1) | list %} {% if completed_tasks %}
+      <section class="completed-section">
+        <div class="completed-header">
+          <div>
+            <p class="section-label">COMPLETED</p>
+            <p class="completed-hint">Tap a task to restore it.</p>
+          </div>
+          <form action="{{ url_for('clear_completed_tasks') }}" method="POST">
+            <button class="clear-button" type="submit">Clear</button>
+          </form>
+        </div>
+        <div class="task-list completed-list">
+          {% for task in completed_tasks %}
+          <form
+            class="task-form"
+            action="{{ url_for('toggle_task', task_id=task['id']) }}"
+            method="POST"
+          >
+            <button class="task-item task-button completed" type="submit">
+              <span class="task-circle"> ✓ </span>
+              <span class="task-content">
+                <span class="task-name"> {{ task["name"] }} </span>
+                <span class="task-meta">
+                  <span class="assignee"> {{ task["assignee"] }} </span>
+                  {% if task["due_date"] %}
+                  <span class="due-date"> {{ task["due_date"] }} </span>
+                  {% endif %}
+                </span>
+              </span>
+            </button>
+          </form>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+    </main>
+  </body>
+</html>

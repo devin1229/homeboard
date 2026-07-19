@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Homeboard</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body>
+    <main class="dashboard">
+      <!-- Header -->
+      <header class="topbar">
+        <div class="greeting">
+          <p class="eyebrow" id="current-date"></p>
+          <h1 id="greeting"></h1>
+          <p class="subtitle">Here's what's happening.</p>
+        </div>
+        <div class="weather">
+          {% if weather.available %}
+          <div class="weather-icon">{{ weather.icon | weather_symbol }}</div>
+          <div class="weather-details">
+            <div class="temperature">{{ weather.temperature }}°</div>
+            <div class="condition">{{ weather.condition }}</div>
+            {% else %}
+            <div class="weather-icon">☁︎</div>
+            <div class="condition">Weather unavailable</div>
+            {% endif %}
+          </div>
+        </div>
+      </header>
+      <!-- Dashboard grid -->
+      <section class="dashboard-grid">
+        <!-- Today's schedule -->
+        <article class="card schedule-card">
+          <div class="card-header">
+            <div>
+              <p class="card-label">TODAY</p>
+              <h2>Your day</h2>
+            </div>
+            <div class="schedule-meta">
+              <span class="card-count">
+                {{ today_events|length }} {% if today_events|length == 1%} event
+                {% else %} events {% endif %}
+              </span>
+              <span class="page-indicator" id="schedule-page-indicator"></span>
+            </div>
+          </div>
+          <div class="schedule-list" id="schedule-list">
+            {% if today_events %} {% for event in today_events %}
+            <div class="schedule-item">
+              <div class="event-time">
+                {% if event["all_day"] %}
+                <strong>ALL</strong><span>DAY</span>
+                {% elif event["start_time"] %} {% set format_time =
+                event["start_time"] | format_time %} {% set time_parts =
+                format_time.split(" ") %}
+                <strong>{{ time_parts[0] }}</strong>
+                <span>{{ time_parts[1] }}</span>
+                {% else %}
+                <strong>--</strong>
+                <span>TIME</span>
+                {% endif %}
+              </div>
+              <div class="event-line blue"></div>
+              <div class="event-details">
+                <h3>{{ event["title"] }}</h3>
+                {% if event["location"] %}
+                <p>{{ event["location"] }}</p>
+                {% elif event["person"] != "Anyone" %}
+                <p>For {{ event["person"] }}</p>
+                {% elif event["all_day"] %}
+                <p>All-day event</p>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %} {% else %}
+            <div class="schedule-empty">
+              <h3>Nothing scheduled today.</h3>
+              <p>Things are peaceful.</p>
+            </div>
+            {% endif %}
+          </div>
+        </article>
+        <!-- Tasks -->
+        <article class="card tasks-card">
+          <div class="card-header">
+            <div>
+              <p class="card-label">HOUSE</p>
+              <h2>To do</h2>
+            </div>
+            <span class="card-count" id="task-count"> Loading... </span>
+          </div>
+          <div class="task-list" id="task-list"></div>
+        </article>
+        <!-- Upcoming -->
+        <article class="card upcoming-card">
+          <div class="card-header">
+            <div>
+              <p class="card-label">CALENDAR</p>
+              <h2>Coming up</h2>
+            </div>
+            <span class="card-count">Next 7 days</span>
+          </div>
+          <div class="upcoming-list">
+            {% if upcoming_events %} {% for event in upcoming_events %} {% set
+            event_date = event["event_date"] | string %}
+            <div class="upcoming-item">
+              <div class="date-block">
+                <span> {{ event["event_date"] | weekday_short }} </span>
+                <strong> {{ event["event_date"][8:10] | int }} </strong>
+              </div>
+              <div>
+                <h3>{{ event["title"] }}</h3>
+                <p>
+                  {% if event["all_day"] %} All day {% elif event["start_time"]
+                  %} {{ event["start_time"] | format_time }} {% else %} Time not
+                  set {% endif %}
+                </p>
+              </div>
+            </div>
+            {% endfor %} {% else %}
+            <div class="upcoming-empty">
+              <h3>Nothing coming up.</h3>
+              <p>The week ahead is wide open.</p>
+            </div>
+            {% endif %}
+          </div>
+        </article>
+        <!-- Shopping -->
+        <article class="card shopping-card">
+          <div class="card-header">
+            <div>
+              <p class="card-label">SHOPPING</p>
+              <h2>Need to get</h2>
+            </div>
+            <div class="shopping-meta">
+              <span class="card-count" id="shopping-count">
+                {{ shopping_items|length }} {% if shopping_items|length == 1 %}
+                item {% else %} items {% endif %}
+              </span>
+              <span class="page-indicator" id="shopping-page-indicator"></span>
+            </div>
+          </div>
+          <div class="shopping-grid" id="shopping-grid">
+            {% for item in shopping_items %}
+            <div class="shopping-item">{{ item["name"] }}</div>
+            {% endfor %}
+          </div>
+        </article>
+      </section>
+      <!-- Footer -->
+      <div class="footer">
+        <span>Homeboard</span>
+        <span class="footer-dot">•</span>
+        <span id="live-clock"></span>
+      </div>
+    </main>
+
+    <section class="ambient" id="ambient-mode">
+      <div class="ambient-content">
+        <div class="ambient-time" id="ambient-time">7:42</div>
+        <div class="ambient-date" id="ambient-date">Saturday, July 4</div>
+        <div class="ambient-weather">
+          {% if weather.available %}
+          <span class="ambient-weather-icon">
+            {{ weather.icon | weather_symbol }}
+          </span>
+          <span class="ambient-temperature"> {{ weather.temperature }} </span>
+          <span class="ambient-condition"> {{ weather.condition }} </span>
+          {% else %}
+          <span class="ambient-weather-icon">☁︎</span>
+          <span class="ambient-condition"> Weather unavailable </span>
+          {% endif %}
+        </div>
+        <div class="ambient-next">
+          <span class="ambient-next-label">UP NEXT</span>
+          <span class="ambient-next-event">
+            {% if next_event %} {{ next_event["title"] }} {% if
+            next_event["event_date"] == today %} {% if next_event["all_day"] %}
+            · Today {% elif next_event["start_time"] %} · {{
+            next_event["start_time"] | format_time }} {% endif %} {% else %} ·
+            {{ next_event["event_date"] | weekday_short }} {% if
+            next_event["all_day"] %} · All Day {% elif next_event["start_time"]
+            %} · {{ next_event["start_time"] | format_time }} {% endif %} {%
+            endif %} {% else %} Nothing coming up {% endif %}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

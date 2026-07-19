@@ -1,0 +1,614 @@
+/* ------------------------------
+   Base
+------------------------------ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family:
+    --apple-style, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", Arial, sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 85% 5%,
+      rgba(202, 220, 255, 0.55),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 5% 95%,
+      rgba(226, 214, 255, 0.35),
+      transparent 30%
+    ),
+    #f5f5f7;
+
+  color: #1d1d1f;
+  transition: filter 1.5s ease;
+}
+
+/* Brightness Control */
+
+body.brightness-day {
+  filter: brightness(1);
+}
+
+body.brightness-evening {
+  filter: brightness(0.75);
+}
+
+body.brightness-night {
+  filter: brightness(0.55);
+}
+
+/* ------------------------------
+   Dashboard
+------------------------------ */
+
+.dashboard {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 56px 68px 34px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ------------------------------
+   Header
+------------------------------ */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 42px;
+}
+
+.eyebrow,
+.card-label {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #86868b;
+}
+
+.greeting h1 {
+  margin: 0;
+  font-size: 54px;
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  font-weight: 650;
+}
+
+.subtitle {
+  margin: 12px 0 0;
+  font-size: 20px;
+  color: #6e6e73;
+}
+
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+.weather-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.temperature {
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -1px;
+}
+
+.condition {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #6e6e73;
+}
+
+/* ------------------------------
+   Grid
+------------------------------ */
+
+.dashboard-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.35fr)
+    minmax(0, 1fr);
+
+  grid-template-rows:
+    minmax(0, 1.15fr)
+    minmax(0, 0.85fr);
+
+  gap: 24px;
+}
+
+/* ------------------------------
+   Cards
+------------------------------ */
+
+.card {
+  min-width: 0;
+  padding: 28px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.055);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.card-count {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.045);
+  font-size: 13px;
+  font-weight: 600;
+  color: #6e6e73;
+}
+
+/* ------------------------------
+   Schedule
+------------------------------ */
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.schedule-item {
+  display: grid;
+  grid-template-columns:
+    62px
+    4px
+    1fr;
+
+  align-items: center;
+  gap: 18px;
+}
+
+.event-time {
+  text-align: right;
+}
+
+.event-time strong {
+  display: block;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.event-time span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #86868b;
+}
+
+.event-line {
+  width: 4px;
+  height: 46px;
+  border-radius: 99px;
+}
+
+.event-line.blue {
+  background: #4b8cff;
+}
+
+.event-line.purple {
+  background: #9a73ef;
+}
+
+.event-line.orange {
+  background: #ff9f43;
+}
+
+.event-details h3,
+.upcoming-item h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.event-details p,
+.upcoming-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #86868b;
+}
+
+/* ------------------------------
+   Tasks
+------------------------------ */
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-item {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+  font-size: 17px;
+}
+
+.task-item:last-child {
+  border-bottom: 0;
+}
+
+.task-circle {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 auto;
+  border: 2px solid #b7b7bc;
+  border-radius: 50%;
+}
+
+.task-circle.checked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: #34c759;
+  background: #34c759;
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.task-item.completed {
+  color: #a1a1a6;
+  text-decoration: line-through;
+}
+
+/* ------------------------------
+   Upcoming
+------------------------------ */
+
+.upcoming-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.upcoming-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.025);
+}
+
+.date-block {
+  width: 48px;
+  height: 58px;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.date-block span {
+  font-size: 10px;
+  font-weight: 800;
+  color: #ff3b30;
+}
+
+.date-block strong {
+  margin-top: 2px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ------------------------------
+   Shopping
+------------------------------ */
+
+.shopping-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.shopping-item {
+  padding: 11px 15px;
+  border-radius: 14px;
+  background: rgba(0, 122, 255, 0.08);
+  font-size: 15px;
+  font-weight: 550;
+  color: #1668c7;
+}
+
+/* ------------------------------
+   Footer
+------------------------------ */
+
+.footer {
+  height: 38px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 8px;
+  font-size: 12px;
+  color: #a1a1a6;
+}
+
+.footer-dot {
+  opacity: 0.6;
+}
+
+/* ------------------------------
+   Smaller browser windows
+------------------------------ */
+
+@media (max-width: 1000px) {
+  .dashboard {
+    padding: 32px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .upcoming-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------
+   Ambient Mode
+------------------------------ */
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background:
+    radial-gradient(
+      circle at 75% 20%,
+      rgba(73, 93, 145, 0.28),
+      transparent 35%
+    ),
+    radial-gradient(circle at 20% 80%, rgba(94, 70, 130, 0.2), transparent 35%),
+    #111318;
+
+  color: white;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 1.4s ease,
+    visibility 1.4s ease;
+}
+
+.ambient.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ambient-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 20s ease-in-out;
+}
+
+.ambient-time {
+  font-size: clamp(100px, 12vw, 190px);
+  line-height: 0.9;
+  font-weight: 250;
+  letter-spacing: -8px;
+}
+
+.ambient-date {
+  margin-top: 28px;
+  font-size: 28px;
+  font-weight: 450;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.ambient-weather {
+  margin-top: 42px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 550;
+}
+
+.ambient-weather-icon {
+  font-size: 30px;
+}
+
+.ambient-condition {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+}
+
+.ambient-next {
+  margin-top: 58px;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.ambient-next-label {
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ambient-next-event {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ------------------------------
+   Ambient Position Drift
+------------------------------ */
+
+.ambient-content {
+  transition: opacity 1s ease;
+}
+
+.ambient-content.position-center {
+  transform: translate(0, 0);
+}
+
+.ambient-content.position-upper-left {
+  transform: translate(-18vw, -8vh);
+}
+
+.ambient-content.position-upper-right {
+  transform: translate(18vw, -8vh);
+}
+
+.ambient-content.position-lower-left {
+  transform: translate(-18vw, 8vh);
+}
+
+.ambient-content.position-lower-right {
+  transform: translate(18vw, 8vh);
+}
+
+/* ------------------------------
+   Shopping Pagination
+------------------------------ */
+
+.shopping-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-indicator {
+  display: none;
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: rgba(0, 122, 255, 0.08);
+  font-size: 12px;
+  font-weight: 650;
+  color: #1668c7;
+}
+
+.shopping-grid {
+  transition: opacity 0.35s ease;
+}
+
+.shopping-grid.page-fade {
+  opacity: 0;
+}
+
+/* ------------------------------
+   Live Dashboard Tasks
+------------------------------ */
+
+.task-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.task-assignee {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(0, 122, 255, 0.09);
+  color: #1668c7;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.task-due {
+  padding: 5px 8px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+  color: #6e6e73;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.task-due.overdue {
+  background: rgba(255, 59, 48, 0.14);
+  color: #d93025;
+}
+
+.task-due.today {
+  background: rgba(0, 122, 255, 0.12);
+  color: #007aff;
+}
+
+.task-empty {
+  padding: 24px 0;
+  color: #86868b;
+  font-size: 15px;
+  text-align: center;
+}

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar · Homeboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='calendar.css') }}"
+    />
+  </head>
+  <body>
+    <main class="calendar-page">
+      <header class="calendar-header">
+        <p class="eyebrow">HOMEBOARD</p>
+        <h1>Calendar</h1>
+        <p class="subtitle">
+          Appointments, plans, and other reasons to put on pants.
+        </p>
+      </header>
+      <form
+        class="event-form"
+        action="
+      {% if edit_event %}
+      {{ url_for('update_event', event_id=edit_event['id']) }}
+      {% else %}
+      {{ url_for('add_event') }}
+      {% endif %}
+      "
+        method="POST"
+      >
+        <div class="field">
+          <label for="title">Event</label>
+          <input
+            id="title"
+            type="text"
+            name="title"
+            placeholder="What's happening?"
+            autocomplete="off"
+            value="{{ edit_event['title'] if edit_event else '' }}"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="event_date">Start Date</label>
+            <input id="event_date" type="date" name="event_date" value="{{ edit_event['event_date'] if edit_event else '' }}" required/>
+          </div>
+          <div class="field">
+            <label for="end_date">End Date</label>
+            <input id="end_date" type="date" name="end_date" value="{{ edit_event['end_date'] if edit_event else '' }}" required/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="person">For</label>
+            <select id="person" name="person">
+              <option
+                value="Anyone"
+              {% if edit_event and edit_event["person"] == "Anyone" %}
+              selected
+              {% endif %}
+              >
+                Anyone
+              </option>
+              <option value="Devin" {% if edit_event and edit_event["person"] == "Devin" %} selected {% endif %}>Devin</option>
+              <option value="Mom" {% if edit_event and edit_event["person"] == "Mom" %} selected {% endif %}>Mom</option>
+              <option value="Garrett" {% if edit_event and edit_event["person"] == "Garrett" %} selected {% endif %}>Garrett</option>
+            </select>
+          </div>
+        </div>
+        <label class="all-day-option">
+          <input id="all_day" type="checkbox" name="all_day" {% if edit_event and edit_event["all_day"] %} checked {% endif %} />
+          <span>All-day event</span>
+        </label>
+        <div class="form-row" id="time-fields">
+          <div class="field">
+            <label for="start_time">Start Time
+            </label>
+                          <input
+              id="start_time"
+              type="time"
+              name="start_time"
+              value="{{ edit_event['start_time'] if edit_event and edit_event['start_time'] else '' }}">
+          </div>
+          <div class="field">
+            <label for="end_time">End Time
+            </label>
+            <input
+              id="end_time"
+              type="time"
+              name="end_time"
+              value="{{ edit_event['end_time'] if edit_event and edit_event['end_time'] else ''}}">
+          </div>
+        </div>
+        <div class="field">
+          <label for="location">Location</label>
+          <input
+            id="location"
+            type="text"
+            name="location"
+            placeholder="Optional"
+            value="{{ edit_event['location'] if edit_event and edit_event['location'] else '' }}"
+          />
+        </div>
+        <div class="field">
+          <label for="notes">Notes</label>
+          <textarea
+            id="notes"
+            name="notes"
+            placeholder="Optional details"
+            rows="3"
+          >{{ edit_event['notes'] if edit_event and edit_event['notes'] else '' }}</textarea>
+        </div>
+        <div class="form-actions">
+        <button class="add-button" type="submit">
+            {% if edit_event %}
+            Save changes
+            {% else %}
+            Add event
+            {% endif %}
+        </button>
+        {% if edit_event %}
+        <a 
+        class="cancel-button"
+        href="{{ url_for('calendar') }}">
+    Cancel
+    </a>
+    {% endif %}
+    </div>
+      </form>
+      <section class="event-list">
+        {% if event_items %} {% for event in event_items %}
+        <article class="event-item">
+          <div class="event-date-block">
+            {% if event["event_date"] == event["end_date"] %}
+            <span>
+              {{ event["event_date"][5:7] }}/{{ event["event_date"][8:10] }}
+            </span>
+            {% else %}
+            <span>
+              {{ event["event_date"][5:7] }}/{{ event["event_date"][8:10] }}
+              <br>
+              ↓
+              <br>
+              {{ event["end_date"][5:7] }}/{{ event["end_date"][8:10] }}
+            </span>
+            {% endif %}
+          </div>
+          <div class="event-content">
+            <div class="event-title-row">
+              <h2>{{ event["title"] }}</h2>
+              <span class="person-badge">
+                {% if event["person"] == "Devin" %} D {% elif event["person"] ==
+                "Mom" %} M {% elif event["person"] == "Garrett" %} G {% else %}
+                ⌂ {% endif %}
+              </span>
+            </div>
+            <p class="event-time">
+              {% if event["all_day"] %}
+              All day
+              {% elif event["start_time"] %}
+              {{ event["start_time"] | format_time }}
+              {% if event["end_time"] %}
+              {% if event["event_date"] != event["end_date"] %}
+              → {{ event["end_time"] | format_time }}
+              {% else %}
+              - {{ event["end_time"] | format_time }}
+              {% endif %}
+              {% endif %}
+              {% else %}
+              Time not set
+              {% endif %}
+            </p>
+            {% if event["location"] %}
+            <p class="event-location">{{ event["location"] }}</p>
+            {% endif %} {% if event["notes"] %}
+            <p class="event-notes">{{ event["notes"] }}</p>
+            {% endif %}
+            <div class="event-actions">
+                <a class="edit-button"
+                href="{{ url_for('calendar', edit=event['id']) }}">
+            Edit
+            </a>
+            <form
+            class="delete-form"
+            action="{{ url_for('delete_event', event_id=event['id']) }}"
+            method="POST",
+            onsubmit="return confirm('Delete this event?');">
+        <button
+        class="delete-button"
+        type="submit">
+    Delete</button>
+        </form>
+            </div>
+          </div>
+        </article>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <p>No events yet.</p>
+          <span> We're suspiciously available. </span>
+        </div>
+        {% endif %}
+      </section>
+    </main>
+    <script>
+      const allDayCheckbox = document.getElementById("all_day");
+
+      const timeFields = document.getElementById("time-fields");
+
+      const startTime = document.getElementById("start_time");
+
+      const endTime = document.getElementById("end_time");
+
+      const startDate = document.getElementById("event_date");
+
+      const endDate = document.getElementById("end_date");
+
+      let endDateEdited = false;
+
+      endDate.addEventListener("change", () => {
+        endDateEdited = true;
+      });
+
+      if (!endDate.value) {
+        endDate.value = startDate.value;
+      }
+
+      function adjustEndDateForOvernight() {
+        if (
+          allDayCheckbox.checked ||
+          endDateEdited ||
+          !startDate.value ||
+          !startTime.value ||
+          !endTime.value
+        ) {
+          return;
+        }
+
+      if (endTime.value < startTime.value) {
+        const nextDay = new Date(startDate.value);
+        nextDay.setDate(nextDay.getDate() +1);
+        endDate.value = nextDay.toISOString().split("T")[0];
+      } else {
+        endDate.value = startDate.value;
+      }
+
+      if (allDayCheckbox.checked) {
+        timeFields.classList.add("hidden");
+      }
+    }
+
+    startDate.addEventListener("change", () => {
+      if (!endDateEdited) {
+        endDate.value = startDate.value;
+      }
+      adjustEndDateForOvernight();
+    });
+
+    startTime.addEventListener("change", adjustEndDateForOvernight);
+    endTime.addEventListener("change", adjustEndDateForOvernight);
+
+    allDayCheckbox.addEventListener("change", () => {
+      const isAllDay = allDayCheckbox.checked;
+
+      timeFields.classList.toggle("hidden", isAllDay);
+
+      if (isAllDay) {
+        startTime.value = "";
+        endTime.value = "";
+        endDateEdited = false;
+      }
+    });
+    </script>
+  </body>
+</html>
